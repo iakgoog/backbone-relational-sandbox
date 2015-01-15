@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.1.15/backbone.localStorage-min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone-relational/0.9.0/backbone-relational.min.js"></script>
+    
+    <script type="text/javascript">
+
+        window.Book = Backbone.RelationalModel.extend({
+            relations: [{
+                type: Backbone.HasMany,
+                key: "chapters",
+                relatedModel: "Chapter",
+                collectionType: "ChaptersCollection",
+                reverseRelation: {
+                    key: "book"
+                }
+            }]
+        });
+
+        window.BookCollection = Backbone.Collection.extend({
+            model: Book,
+            localStorage: new Backbone.LocalStorage("/books"),
+            initialize: function () {
+                this.fetch();
+            }
+        });
+
+        window.Chapter = Backbone.RelationalModel.extend({});
+
+        window.ChaptersCollection = Backbone.Collection.extend({
+            model: Chapter,
+            localStorage: new Backbone.LocalStorage("/chapters")
+        });
+
+        var books = new BookCollection();
+
+        
+        var book = new Book({title: "333"});
+
+        book.get("chapters").on("add", function (chapter) {
+            console.log("");
+            console.log("book.chapters.add", "id =", chapter.get("id"));
+            console.log("book.chapters.add", "book =", chapter.get("book"));
+        });
+
+        book.on("add:chapters", function (chapter) {
+            console.log("");
+            console.log("book.add:chapters", "id =", chapter.get("id"));
+            console.log("book.add:chapters", "book =", chapter.get("book"));
+        });
+
+        var chapter = book.get("chapters").create({ book_id: 1, title: "Foo" }, { wait: true });
+        
+
+    </script>
+
+</body>
+</html>
