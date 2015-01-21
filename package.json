@@ -24,7 +24,8 @@
   "dependencies": {
     "backbone-crossdomain": "^0.4.1",
     "express": "~3.1.0",
-    "mongoose": "~3.5.5",
+    "mongoose": "~3.6.x",
+    "node-inspector": "^0.8.3",
     "path": "~0.4.9"
   }
 }

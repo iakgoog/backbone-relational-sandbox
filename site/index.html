@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+    <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.1.15/backbone.localStorage-min.js"></script>-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone-relational/0.9.0/backbone-relational.min.js"></script>
+    
+    <script type="text/javascript">
+
+        var base = "http://localhost:4711";
+
+            var Book = Backbone.RelationalModel.extend({
+                urlRoot: base + '/api/books',
+                idAttribute: '_id',
+                relations: [{
+                    type: Backbone.HasMany,
+                    key: "keywords",
+                    relatedModel: "Keyword",
+                    collectionType: "KeywordCollection",
+                    reverseRelation: {
+                        key: "book",
+                        includeInJSON: '_id'
+                    }
+                }],
+                defaults: {
+                    title: 'No title',
+                    author: 'No author',
+                    releaseDate: new Date(),
+                    keywords: []
+                }/*
+                initialize: function () {
+                    this.get("keywords").on("add", function (keyword) {
+                        console.log("");
+                        console.log("book.keywords.add", "id =", keyword.get("_id"));
+                        console.log("book.keywords.add", "book =", keyword.get("book"));
+                    });
+
+                    this.on("add:keywords", function (keyword) {
+                        console.log("");
+                        console.log("book.add:keywords", "id =", keyword.get("_id"));
+                        console.log("book.add:keywords", "book =", keyword.get("book"));
+                    });
+                }
+                */
+            });
+
+            var BookCollection = Backbone.Collection.extend({
+                model: Book,
+                // localStorage: new Backbone.LocalStorage("/books"),
+                url: base + '/api/books',
+                initialize: function () {
+                    this.fetch().done(function () {
+                        
+                    });
+                }
+            });
+
+            var Keyword = Backbone.RelationalModel.extend({
+                urlRoot: base + '/api/keywords',
+                idAttribute: '_id',
+                defaults: {
+                    keyword: 'No Keyword'
+                }
+            });
+
+            var KeywordCollection = Backbone.Collection.extend({
+                model: Keyword,
+                url: base + '/api/keywords',
+                initialize: function () {
+                    this.fetch().done(function () {
+                        // console.log(books.toJSON());
+                    });
+                }
+            });
+
+            var books = new BookCollection();
+            // var chapters = new window.ChaptersCollection();
+            // var pages = new window.PagesCollection();
+
+            var book = new Book();
+            // books.create(book);
+
+            
+            /*
+            book.get("keywords").on("add", function (chapter) {
+                console.log("");
+                console.log("book.chapters.add", "id =", chapter.get("id"));
+                console.log("book.chapters.add", "book =", chapter.get("book"));
+            });
+
+            book.on("add:keywords", function (chapter) {
+                console.log("");
+                console.log("book.add:chapters", "id =", chapter.get("id"));
+                console.log("book.add:chapters", "book =", chapter.get("book"));
+            });
+            */
+            
+            /*
+            var chapter = book.get("chapters").create({ title: "Foo" }, {
+                wait: true
+            });
+            */
+
+    </script>
+
+</body>
+</html>
